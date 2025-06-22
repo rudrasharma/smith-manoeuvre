@@ -120,13 +120,22 @@
                             </div>
                         </div>
                         
-                        <!-- Capitalize Interest Toggle Switch -->
-                        <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200">
-                            <label for="capitalizeInterest" class="font-medium text-gray-900">Capitalize HELOC Interest?</label>
-                            <label class="relative inline-flex items-center cursor-pointer toggle-switch-label">
-                              <input type="checkbox" id="capitalizeInterest" class="toggle-switch-input">
-                              <div class="toggle-switch-bg"><div class="toggle-switch-dot"></div></div>
-                            </label>
+                        <!-- Toggle Switches -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200">
+                                <label for="capitalizeInterest" class="font-medium text-gray-900">Capitalize HELOC Interest?</label>
+                                <label class="relative inline-flex items-center cursor-pointer toggle-switch-label">
+                                  <input type="checkbox" id="capitalizeInterest" class="toggle-switch-input">
+                                  <div class="toggle-switch-bg"><div class="toggle-switch-dot"></div></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200">
+                                <label for="useTaxRefundAsPrepayment" class="font-medium text-gray-900">Use Tax Refund as Prepayment?</label>
+                                <label class="relative inline-flex items-center cursor-pointer toggle-switch-label">
+                                  <input type="checkbox" id="useTaxRefundAsPrepayment" class="toggle-switch-input" checked>
+                                  <div class="toggle-switch-bg"><div class="toggle-switch-dot"></div></div>
+                                </label>
+                            </div>
                         </div>
 
 
@@ -217,6 +226,7 @@
         const columnConfig = [
             { id: 'period', label: 'Period', visible: true },
             { id: 'mortgageBalanceStart', label: 'Mortgage Bal (Start)', visible: false },
+            { id: 'mortgagePrepayment', label: 'Mortgage Prepayment', visible: false },
             { id: 'yearMortgageInterestPaid', label: 'Interest (Mortgage)', visible: false },
             { id: 'yearPrincipalPaid', label: 'Principal (Mortgage)', visible: false },
             { id: 'mortgageBalanceEnd', label: 'Mortgage Bal (End)', visible: true },
@@ -239,17 +249,16 @@
         
         // --- Main Calculation Function ---
         function runCalculation() {
-            // Preserve column visibility state by reading from checkboxes before recalculating
+            // Preserve column visibility state
             const columnTogglesContainer = document.getElementById('columnToggles');
             if (!columnTogglesContainer.classList.contains('hidden')) {
                 columnConfig.forEach(col => {
                     const checkbox = document.getElementById(`toggle-${col.id}`);
-                    if (checkbox) {
-                        col.visible = checkbox.checked;
-                    }
+                    if (checkbox) col.visible = checkbox.checked;
                 });
             }
 
+            // Get all user inputs
             const homeValue = parseFloat(document.getElementById('homeValue').value);
             const mortgageAmount = parseFloat(document.getElementById('mortgageAmount').value);
             const mortgageRate = parseFloat(document.getElementById('mortgageRate').value) / 100;
@@ -258,6 +267,7 @@
             const investmentReturn = parseFloat(document.getElementById('investmentReturn').value) / 100;
             const taxRate = parseFloat(document.getElementById('taxRate').value) / 100;
             const capitalizeInterest = document.getElementById('capitalizeInterest').checked;
+            const useTaxRefundAsPrepayment = document.getElementById('useTaxRefundAsPrepayment').checked;
             const topUpAmount = parseFloat(document.getElementById('topUpAmount').value) || 0;
             
             if (isNaN(homeValue) || isNaN(mortgageAmount) || isNaN(mortgageRate) || isNaN(amortization) || isNaN(helocRate) || isNaN(investmentReturn) || isNaN(taxRate) || isNaN(topUpAmount)) {
@@ -265,7 +275,7 @@
                 return;
             }
 
-            // --- Monthly Calculation Logic ---
+            // --- Initialize variables ---
             const maxHelocAllowed = homeValue * 0.65;
             let currentMortgageBalance = mortgageAmount;
             let helocBalance = 0;
@@ -277,38 +287,34 @@
             // Display Max HELOC
             document.getElementById('maxHelocValue').textContent = formatCurrency(maxHelocAllowed);
 
-
             // Apply initial top-up
             const initialInvestment = Math.min(topUpAmount, maxHelocAllowed);
             helocBalance += initialInvestment;
             portfolioValue += initialInvestment;
 
-
+            // Calculate monthly mortgage payment
             const monthlyMortgageRate = mortgageRate / 12;
             const totalMonths = amortization * 12;
             const monthlyMortgagePayment = mortgageAmount * (monthlyMortgageRate * Math.pow(1 + monthlyMortgageRate, totalMonths)) / (Math.pow(1 + monthlyMortgageRate, totalMonths) - 1);
             
-            // Display monthly payment
             document.getElementById('monthlyPaymentValue').textContent = formatCurrency(monthlyMortgagePayment);
             document.getElementById('summarySection').classList.remove('hidden');
-
 
             const monthlyHelocRate = helocRate / 12;
             const monthlyInvestmentReturn = Math.pow(1 + investmentReturn, 1/12) - 1;
             let annualTaxRefund = 0;
 
+            // --- Main Simulation Loop ---
             for (let month = 1; month <= totalMonths; month++) {
                 if (currentMortgageBalance <= 0 && helocBalance >= maxHelocAllowed) break;
                 
-                let mortgagePrincipalPaid = 0;
-                let mortgageInterestPaid = 0;
-                let taxPrepaymentThisMonth = 0;
-
                 const mortgageBalanceStart = currentMortgageBalance;
                 const helocBalanceStart = helocBalance;
                 const investmentValueStart = portfolioValue;
 
-                if (month > 1 && (month - 1) % 12 === 0) {
+                // --- Tax Refund & Prepayment Logic ---
+                let taxPrepaymentThisMonth = 0;
+                if (useTaxRefundAsPrepayment && month > 1 && (month - 1) % 12 === 0) {
                     taxPrepaymentThisMonth = annualTaxRefund;
                     currentMortgageBalance -= taxPrepaymentThisMonth;
                     if(currentMortgageBalance < 0) {
@@ -316,8 +322,13 @@
                         currentMortgageBalance = 0;
                     }
                     annualTaxRefund = 0;
+                } else if ((month - 1) % 12 === 0) {
+                     annualTaxRefund = 0; // Reset refund even if not used
                 }
-
+                
+                // --- Mortgage Payment Logic ---
+                let mortgagePrincipalPaid = 0;
+                let mortgageInterestPaid = 0;
                 if (currentMortgageBalance > 0) {
                     mortgageInterestPaid = currentMortgageBalance * monthlyMortgageRate;
                     mortgagePrincipalPaid = monthlyMortgagePayment - mortgageInterestPaid;
@@ -331,8 +342,9 @@
                 const helocInterestDue = helocBalanceStart * monthlyHelocRate;
                 const taxSavingsThisPeriod = helocInterestDue * taxRate;
                 cumulativeTaxSavings += taxSavingsThisPeriod;
-                annualTaxRefund += helocInterestDue * taxRate;
+                annualTaxRefund += taxSavingsThisPeriod;
 
+                // --- HELOC & Investment Logic ---
                 let potentialNewBorrowing = reAdvancedToHeloc + taxPrepaymentThisMonth;
                 if (capitalizeInterest) {
                     potentialNewBorrowing += helocInterestDue;
@@ -351,6 +363,7 @@
                 monthlyResults.push({
                     period: month,
                     mortgageBalanceStart,
+                    mortgagePrepayment: taxPrepaymentThisMonth,
                     yearMortgageInterestPaid: mortgageInterestPaid,
                     yearPrincipalPaid: mortgagePrincipalPaid,
                     mortgageBalanceEnd: currentMortgageBalance,
@@ -375,6 +388,7 @@
                 }
             }
             
+            // --- UI Updates ---
             setupColumnToggles();
             displayResults();
             displayChart(chartData);
@@ -430,6 +444,7 @@
                     if(yearSlice.length === 0) continue;
                     
                     const annualData = yearSlice.reduce((acc, month) => {
+                        acc.mortgagePrepayment += month.mortgagePrepayment;
                         acc.yearMortgageInterestPaid += month.yearMortgageInterestPaid;
                         acc.yearPrincipalPaid += month.yearPrincipalPaid;
                         acc.reAdvancedToHeloc += month.reAdvancedToHeloc;
@@ -437,7 +452,7 @@
                         acc.investmentGrowth += month.investmentGrowth;
                         acc.taxSavingsThisPeriod += month.taxSavingsThisPeriod;
                         return acc;
-                    }, { yearMortgageInterestPaid: 0, yearPrincipalPaid: 0, reAdvancedToHeloc: 0, helocInterestDue: 0, investmentGrowth: 0, taxSavingsThisPeriod: 0 });
+                    }, { mortgagePrepayment: 0, yearMortgageInterestPaid: 0, yearPrincipalPaid: 0, reAdvancedToHeloc: 0, helocInterestDue: 0, investmentGrowth: 0, taxSavingsThisPeriod: 0 });
 
                     const firstMonth = yearSlice[0];
                     const lastMonth = yearSlice[yearSlice.length - 1];
@@ -464,6 +479,7 @@
                 tr.innerHTML = `
                     <td class="col-period">${row.period}</td>
                     <td class="col-mortgageBalanceStart">${formatCurrency(row.mortgageBalanceStart)}</td>
+                    <td class="col-mortgagePrepayment text-green-600">${formatCurrency(row.mortgagePrepayment)}</td>
                     <td class="col-yearMortgageInterestPaid text-red-600">${formatCurrency(row.yearMortgageInterestPaid)}</td>
                     <td class="col-yearPrincipalPaid">${formatCurrency(row.yearPrincipalPaid)}</td>
                     <td class="col-mortgageBalanceEnd">${formatCurrency(row.mortgageBalanceEnd)}</td>
