@@ -29,6 +29,35 @@
         td {
             @apply px-4 py-4 whitespace-nowrap text-sm;
         }
+        /* Table Styles */
+        .results-table thead th {
+            @apply bg-gray-100;
+        }
+        .results-table tbody tr:nth-child(even) {
+            @apply bg-gray-50;
+        }
+        .results-table tbody tr:hover {
+            @apply bg-indigo-50;
+        }
+        /* General Toggle Switch Styles */
+        .toggle-switch-label {
+            @apply flex items-center justify-between;
+        }
+        .toggle-switch-input {
+            @apply sr-only;
+        }
+        .toggle-switch-bg {
+            @apply w-11 h-6 bg-gray-200 rounded-full cursor-pointer transition-colors duration-300 ease-in-out;
+        }
+        .toggle-switch-dot {
+            @apply block w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out;
+        }
+        .toggle-switch-input:checked + .toggle-switch-bg {
+            @apply bg-indigo-600;
+        }
+        .toggle-switch-input:checked + .toggle-switch-bg .toggle-switch-dot {
+            @apply translate-x-5;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -50,32 +79,20 @@
                             <h3 class="text-lg font-medium text-gray-800">Mortgage Details</h3>
                             <div class="mt-4 space-y-4">
                                 <div class="form-group">
-                                    <label for="homeValue" class="form-label">Home Value</label>
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none top-7">
-                                        <span class="text-gray-500 sm:text-sm">$</span>
-                                    </div>
-                                    <input type="number" id="homeValue" class="form-input pl-7" value="750000" required>
+                                    <label for="homeValue" class="form-label">Home Value ($)</label>
+                                    <input type="number" id="homeValue" class="form-input" value="750000" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="mortgageAmount" class="form-label">Mortgage Amount</label>
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none top-7">
-                                        <span class="text-gray-500 sm:text-sm">$</span>
-                                    </div>
-                                    <input type="number" id="mortgageAmount" class="form-input pl-7" value="500000" required>
+                                    <label for="mortgageAmount" class="form-label">Mortgage Amount ($)</label>
+                                    <input type="number" id="mortgageAmount" class="form-input" value="500000" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="mortgageRate" class="form-label">Mortgage Interest Rate</label>
-                                    <input type="number" id="mortgageRate" class="form-input pr-8" value="4.5" step="0.01" required>
-                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none top-7">
-                                        <span class="text-gray-500 sm:text-sm">%</span>
-                                    </div>
+                                    <label for="mortgageRate" class="form-label">Mortgage Interest Rate (%)</label>
+                                    <input type="number" id="mortgageRate" class="form-input" value="4.5" step="0.01" required>
                                 </div>
                                  <div class="form-group">
-                                    <label for="amortization" class="form-label">Amortization Period</label>
-                                    <input type="number" id="amortization" class="form-input pr-16" value="25" required>
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none top-7">
-                                        <span class="text-gray-500 sm:text-sm">Years</span>
-                                    </div>
+                                    <label for="amortization" class="form-label">Amortization Period (Years)</label>
+                                    <input type="number" id="amortization" class="form-input" value="25" required>
                                 </div>
                             </div>
                         </div>
@@ -85,35 +102,26 @@
                             <h3 class="text-lg font-medium text-gray-800">Investment & Tax</h3>
                             <div class="mt-4 space-y-4">
                                 <div class="form-group">
-                                    <label for="helocRate" class="form-label">HELOC Interest Rate</label>
-                                    <input type="number" id="helocRate" class="form-input pr-8" value="5.5" step="0.01" required>
-                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none top-7">
-                                        <span class="text-gray-500 sm:text-sm">%</span>
-                                    </div>
+                                    <label for="helocRate" class="form-label">HELOC Interest Rate (%)</label>
+                                    <input type="number" id="helocRate" class="form-input" value="5.5" step="0.01" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="investmentReturn" class="form-label">Annual Investment Return</label>
-                                    <input type="number" id="investmentReturn" class="form-input pr-8" value="7" step="0.01" required>
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none top-7">
-                                        <span class="text-gray-500 sm:text-sm">%</span>
-                                    </div>
+                                    <label for="investmentReturn" class="form-label">Annual Investment Return (%)</label>
+                                    <input type="number" id="investmentReturn" class="form-input" value="7" step="0.01" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="taxRate" class="form-label">Marginal Tax Rate</label>
-                                    <input type="number" id="taxRate" class="form-input pr-8" value="40" step="0.01" required>
-                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none top-7">
-                                        <span class="text-gray-500 sm:text-sm">%</span>
-                                    </div>
+                                    <label for="taxRate" class="form-label">Marginal Tax Rate (%)</label>
+                                    <input type="number" id="taxRate" class="form-input" value="40" step="0.01" required>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Toggle Switch -->
+                        <!-- Capitalize Interest Toggle Switch -->
                         <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200">
                             <label for="capitalizeInterest" class="font-medium text-gray-900">Capitalize HELOC Interest?</label>
-                            <label for="capitalizeInterest" class="relative inline-flex items-center cursor-pointer">
-                              <input type="checkbox" id="capitalizeInterest" class="sr-only peer">
-                              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                            <label class="relative inline-flex items-center cursor-pointer toggle-switch-label">
+                              <input type="checkbox" id="capitalizeInterest" class="toggle-switch-input">
+                              <div class="toggle-switch-bg"><div class="toggle-switch-dot"></div></div>
                             </label>
                         </div>
 
@@ -134,32 +142,46 @@
             <!-- Results Section -->
             <div class="lg:col-span-2">
                 <div class="card hidden" id="resultsCard">
-                    <h2 class="text-2xl font-semibold mb-4">Projection Results</h2>
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-2xl font-semibold">Projection Results</h2>
+                        <div id="viewModeContainer" class="hidden flex items-center space-x-4">
+                             <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-700">Annual</span>
+                                <label for="viewAnnualToggle" class="relative inline-flex items-center cursor-pointer toggle-switch-label">
+                                    <input type="checkbox" id="viewAnnualToggle" class="toggle-switch-input" checked>
+                                    <div class="toggle-switch-bg"><div class="toggle-switch-dot"></div></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-700">Monthly</span>
+                                 <label for="viewMonthlyToggle" class="relative inline-flex items-center cursor-pointer toggle-switch-label">
+                                    <input type="checkbox" id="viewMonthlyToggle" class="toggle-switch-input">
+                                    <div class="toggle-switch-bg"><div class="toggle-switch-dot"></div></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                     
                     <!-- Chart -->
                     <div class="mb-8">
                          <canvas id="growthChart"></canvas>
                     </div>
 
+                    <!-- Column Visibility -->
+                    <div id="columnToggles" class="mb-4 p-4 border border-gray-200 rounded-lg hidden">
+                        <h3 class="font-semibold mb-2">Column Visibility</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 text-sm">
+                           <!-- Toggles will be injected here -->
+                        </div>
+                    </div>
+
+
                     <!-- Table -->
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
+                    <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200 results-table">
                             <thead class="bg-gray-50">
-                                <tr>
-                                    <th>Year</th>
-                                    <th>Mortgage Bal (Start)</th>
-                                    <th>Interest (Mortgage)</th>
-                                    <th>Principal (Mortgage)</th>
-                                    <th>Mortgage Bal (End)</th>
-                                    <th>Re-advanced (to HELOC)</th>
-                                    <th>HELOC Bal (Start)</th>
-                                    <th>HELOC Interest Due</th>
-                                    <th>HELOC Bal (End)</th>
-                                    <th>Invest Val (Start)</th>
-                                    <th>Invest Growth</th>
-                                    <th>Invest Val (End)</th>
-                                    <th>Tax Savings (Period)</th>
-                                    <th>Cum. Tax Savings</th>
+                                <tr id="table-header-row">
+                                    <!-- Headers are injected here -->
                                 </tr>
                             </thead>
                             <tbody id="resultsTable" class="bg-white divide-y divide-gray-200">
@@ -178,16 +200,43 @@
     <script>
         // --- Globals ---
         let growthChartInstance;
+        let monthlyResults = [];
+        const columnConfig = [
+            { id: 'period', label: 'Period', visible: true },
+            { id: 'mortgageBalanceStart', label: 'Mortgage Bal (Start)', visible: false },
+            { id: 'yearMortgageInterestPaid', label: 'Interest (Mortgage)', visible: false },
+            { id: 'yearPrincipalPaid', label: 'Principal (Mortgage)', visible: false },
+            { id: 'mortgageBalanceEnd', label: 'Mortgage Bal (End)', visible: true },
+            { id: 'reAdvancedToHeloc', label: 'Re-advanced', visible: false },
+            { id: 'helocBalanceStart', label: 'HELOC Bal (Start)', visible: false },
+            { id: 'helocInterestDue', label: 'HELOC Interest', visible: false },
+            { id: 'helocBalanceEnd', label: 'HELOC Bal (End)', visible: true },
+            { id: 'investmentValueStart', label: 'Invest Val (Start)', visible: false },
+            { id: 'investmentGrowth', label: 'Invest Growth', visible: true },
+            { id: 'investmentValueEnd', label: 'Invest Val (End)', visible: true },
+            { id: 'taxSavingsThisPeriod', label: 'Tax Savings (Period)', visible: false },
+            { id: 'cumulativeTaxSavings', label: 'Cum. Tax Savings', visible: true }
+        ];
 
-        // --- Event Listener for Form Submission ---
+        // --- Event Listeners ---
         document.getElementById('smithManoeuvreForm').addEventListener('submit', function(event) {
             event.preventDefault();
             runCalculation();
         });
-
+        
         // --- Main Calculation Function ---
         function runCalculation() {
-            // 1. Get User Inputs
+            // Preserve column visibility state by reading from checkboxes before recalculating
+            const columnTogglesContainer = document.getElementById('columnToggles');
+            if (!columnTogglesContainer.classList.contains('hidden')) {
+                columnConfig.forEach(col => {
+                    const checkbox = document.getElementById(`toggle-${col.id}`);
+                    if (checkbox) {
+                        col.visible = checkbox.checked;
+                    }
+                });
+            }
+
             const homeValue = parseFloat(document.getElementById('homeValue').value);
             const mortgageAmount = parseFloat(document.getElementById('mortgageAmount').value);
             const mortgageRate = parseFloat(document.getElementById('mortgageRate').value) / 100;
@@ -202,62 +251,59 @@
                 return;
             }
 
-            // 2. Initialize Calculation Variables
+            // --- Monthly Calculation Logic ---
             const maxHelocAllowed = homeValue * 0.65;
             let currentMortgageBalance = mortgageAmount;
             let helocBalance = 0;
             let portfolioValue = 0;
-            let taxRefundFromLastYear = 0;
             let cumulativeTaxSavings = 0;
-            const results = [];
-            const chartData = {
-                labels: [],
-                mortgage: [],
-                portfolio: [],
-                netWorth: []
-            };
+            const chartData = { labels: [], mortgage: [], portfolio: [], netWorth: [] };
+            monthlyResults = [];
 
             const monthlyMortgageRate = mortgageRate / 12;
-            const numberOfPayments = amortization * 12;
-            const monthlyPayment = mortgageAmount * (monthlyMortgageRate * Math.pow(1 + monthlyMortgageRate, numberOfPayments)) / (Math.pow(1 + monthlyMortgageRate, numberOfPayments) - 1);
+            const monthlyHelocRate = helocRate / 12;
+            const monthlyInvestmentReturn = Math.pow(1 + investmentReturn, 1/12) - 1;
+            const totalMonths = amortization * 12;
+            const monthlyMortgagePayment = mortgageAmount * (monthlyMortgageRate * Math.pow(1 + monthlyMortgageRate, totalMonths)) / (Math.pow(1 + monthlyMortgageRate, totalMonths) - 1);
+            let annualTaxRefund = 0;
 
-            // 3. Simulation Loop for each year
-            for (let year = 1; year <= amortization; year++) {
+            for (let month = 1; month <= totalMonths; month++) {
                 if (currentMortgageBalance <= 0 && helocBalance >= maxHelocAllowed) break;
                 
+                let mortgagePrincipalPaid = 0;
+                let mortgageInterestPaid = 0;
+                let taxPrepaymentThisMonth = 0;
+
                 const mortgageBalanceStart = currentMortgageBalance;
                 const helocBalanceStart = helocBalance;
                 const investmentValueStart = portfolioValue;
-                
-                const helocInterestDue = helocBalanceStart * helocRate;
+
+                if (month > 1 && (month - 1) % 12 === 0) {
+                    taxPrepaymentThisMonth = annualTaxRefund;
+                    currentMortgageBalance -= taxPrepaymentThisMonth;
+                    if(currentMortgageBalance < 0) {
+                        taxPrepaymentThisMonth += currentMortgageBalance;
+                        currentMortgageBalance = 0;
+                    }
+                    annualTaxRefund = 0;
+                }
+
+                if (currentMortgageBalance > 0) {
+                    mortgageInterestPaid = currentMortgageBalance * monthlyMortgageRate;
+                    mortgagePrincipalPaid = monthlyMortgagePayment - mortgageInterestPaid;
+                    if (currentMortgageBalance - mortgagePrincipalPaid < 0) {
+                        mortgagePrincipalPaid = currentMortgageBalance;
+                    }
+                    currentMortgageBalance -= mortgagePrincipalPaid;
+                }
+
+                const reAdvancedToHeloc = mortgagePrincipalPaid;
+                const helocInterestDue = helocBalanceStart * monthlyHelocRate;
                 const taxSavingsThisPeriod = helocInterestDue * taxRate;
                 cumulativeTaxSavings += taxSavingsThisPeriod;
+                annualTaxRefund += helocInterestDue * taxRate;
 
-                let yearPrincipalPaid = 0;
-                let yearMortgageInterestPaid = 0;
-                if (currentMortgageBalance > 0) {
-                    // Prepay with last year's refund before calculating this year's payments
-                    let balanceAfterPrepayment = currentMortgageBalance - taxRefundFromLastYear;
-                    if(balanceAfterPrepayment < 0) {
-                        taxRefundFromLastYear += balanceAfterPrepayment; // Adjust refund if it overpays mortgage
-                        balanceAfterPrepayment = 0;
-                    }
-
-                    let tempBalance = balanceAfterPrepayment;
-                    for (let month = 1; month <= 12; month++) {
-                        if (tempBalance <= 0) break;
-                        const interestForMonth = tempBalance * monthlyMortgageRate;
-                        const principalForMonth = monthlyPayment - interestForMonth > tempBalance ? tempBalance : monthlyPayment - interestForMonth;
-                        
-                        yearMortgageInterestPaid += interestForMonth;
-                        yearPrincipalPaid += principalForMonth;
-                        tempBalance -= principalForMonth;
-                    }
-                }
-                
-                const reAdvancedToHeloc = yearPrincipalPaid;
-                
-                let potentialNewBorrowing = reAdvancedToHeloc + taxRefundFromLastYear;
+                let potentialNewBorrowing = reAdvancedToHeloc + taxPrepaymentThisMonth;
                 if (capitalizeInterest) {
                     potentialNewBorrowing += helocInterestDue;
                 }
@@ -267,22 +313,16 @@
 
                 helocBalance += newInvestment;
                 
-                const investmentGrowth = (investmentValueStart + newInvestment) * investmentReturn;
+                const investmentGrowth = (investmentValueStart + newInvestment) * monthlyInvestmentReturn;
                 portfolioValue = investmentValueStart + newInvestment + investmentGrowth;
                 
-                currentMortgageBalance -= (yearPrincipalPaid + taxRefundFromLastYear);
-                if (currentMortgageBalance < 0) {
-                    currentMortgageBalance = 0;
-                }
-                
-                taxRefundFromLastYear = taxSavingsThisPeriod;
-                
                 const netWorth = portfolioValue - currentMortgageBalance - helocBalance;
-                results.push({
-                    year,
+
+                monthlyResults.push({
+                    period: month,
                     mortgageBalanceStart,
-                    yearMortgageInterestPaid,
-                    yearPrincipalPaid,
+                    yearMortgageInterestPaid: mortgageInterestPaid,
+                    yearPrincipalPaid: mortgagePrincipalPaid,
                     mortgageBalanceEnd: currentMortgageBalance,
                     reAdvancedToHeloc,
                     helocBalanceStart,
@@ -295,136 +335,197 @@
                     cumulativeTaxSavings
                 });
 
-                chartData.labels.push(year);
-                chartData.mortgage.push(currentMortgageBalance);
-                chartData.portfolio.push(portfolioValue);
-                chartData.netWorth.push(netWorth);
+                if (month % 12 === 0 || month === totalMonths) {
+                    chartData.labels.push(Math.ceil(month / 12));
+                    chartData.mortgage.push(currentMortgageBalance);
+                    chartData.portfolio.push(portfolioValue);
+                    chartData.netWorth.push(netWorth);
+                }
             }
-
-            // 4. Display the results
-            displayResults(results);
+            
+            setupColumnToggles();
+            displayResults();
             displayChart(chartData);
+            updateColumnVisibility();
 
             document.getElementById('resultsCard').classList.remove('hidden');
             document.getElementById('initialState').classList.add('hidden');
+            const viewModeContainer = document.getElementById('viewModeContainer');
+            viewModeContainer.classList.remove('hidden');
+
+            const annualToggle = document.getElementById('viewAnnualToggle');
+            const monthlyToggle = document.getElementById('viewMonthlyToggle');
+
+            annualToggle.removeEventListener('change', handleViewToggle);
+            monthlyToggle.removeEventListener('change', handleViewToggle);
+            annualToggle.addEventListener('change', handleViewToggle);
+            monthlyToggle.addEventListener('change', handleViewToggle);
+        }
+
+        function handleViewToggle(event) {
+            const annualToggle = document.getElementById('viewAnnualToggle');
+            const monthlyToggle = document.getElementById('viewMonthlyToggle');
+            const changedToggle = event.target;
+
+            if (changedToggle.id === 'viewAnnualToggle') {
+                if(changedToggle.checked) {
+                    monthlyToggle.checked = false;
+                } else {
+                    changedToggle.checked = true;
+                }
+            } else if (changedToggle.id === 'viewMonthlyToggle') {
+                 if(changedToggle.checked) {
+                    annualToggle.checked = false;
+                } else {
+                    changedToggle.checked = true;
+                }
+            }
+            displayResults();
         }
 
         // --- UI Display Functions ---
-        
-        function displayResults(data) {
+        function displayResults() {
+            const isMonthlyView = document.getElementById('viewMonthlyToggle').checked;
             const tableBody = document.getElementById('resultsTable');
             tableBody.innerHTML = ''; // Clear previous results
 
-            data.forEach(row => {
+            let dataToDisplay = [];
+            if (!isMonthlyView) {
+                columnConfig.find(c => c.id === 'period').label = 'Year';
+                let year = 1;
+                for (let i = 0; i < monthlyResults.length; i += 12) {
+                    const yearSlice = monthlyResults.slice(i, i + 12);
+                    if(yearSlice.length === 0) continue;
+                    
+                    const annualData = yearSlice.reduce((acc, month) => {
+                        acc.yearMortgageInterestPaid += month.yearMortgageInterestPaid;
+                        acc.yearPrincipalPaid += month.yearPrincipalPaid;
+                        acc.reAdvancedToHeloc += month.reAdvancedToHeloc;
+                        acc.helocInterestDue += month.helocInterestDue;
+                        acc.investmentGrowth += month.investmentGrowth;
+                        acc.taxSavingsThisPeriod += month.taxSavingsThisPeriod;
+                        return acc;
+                    }, { yearMortgageInterestPaid: 0, yearPrincipalPaid: 0, reAdvancedToHeloc: 0, helocInterestDue: 0, investmentGrowth: 0, taxSavingsThisPeriod: 0 });
+
+                    const firstMonth = yearSlice[0];
+                    const lastMonth = yearSlice[yearSlice.length - 1];
+                    
+                    annualData.period = year++;
+                    annualData.mortgageBalanceStart = firstMonth.mortgageBalanceStart;
+                    annualData.mortgageBalanceEnd = lastMonth.mortgageBalanceEnd;
+                    annualData.helocBalanceStart = firstMonth.helocBalanceStart;
+                    annualData.helocBalanceEnd = lastMonth.helocBalanceEnd;
+                    annualData.investmentValueStart = firstMonth.investmentValueStart;
+                    annualData.investmentValueEnd = lastMonth.investmentValueEnd;
+                    annualData.cumulativeTaxSavings = lastMonth.cumulativeTaxSavings;
+                    dataToDisplay.push(annualData);
+                }
+            } else { // Monthly view
+                columnConfig.find(c => c.id === 'period').label = 'Month';
+                dataToDisplay = monthlyResults;
+            }
+
+            setupTableHeaders();
+
+            dataToDisplay.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${row.year}</td>
-                    <td>${formatCurrency(row.mortgageBalanceStart)}</td>
-                    <td class="text-red-600">${formatCurrency(row.yearMortgageInterestPaid)}</td>
-                    <td>${formatCurrency(row.yearPrincipalPaid)}</td>
-                    <td>${formatCurrency(row.mortgageBalanceEnd)}</td>
-                    <td>${formatCurrency(row.reAdvancedToHeloc)}</td>
-                    <td>${formatCurrency(row.helocBalanceStart)}</td>
-                    <td class="text-red-600">${formatCurrency(row.helocInterestDue)}</td>
-                    <td>${formatCurrency(row.helocBalanceEnd)}</td>
-                    <td>${formatCurrency(row.investmentValueStart)}</td>
-                    <td class="text-green-600 font-medium">${formatCurrency(row.investmentGrowth)}</td>
-                    <td class="text-green-600 font-medium">${formatCurrency(row.investmentValueEnd)}</td>
-                    <td class="text-blue-600">${formatCurrency(row.taxSavingsThisPeriod)}</td>
-                    <td class="text-blue-600 font-bold">${formatCurrency(row.cumulativeTaxSavings)}</td>
+                    <td class="col-period">${row.period}</td>
+                    <td class="col-mortgageBalanceStart">${formatCurrency(row.mortgageBalanceStart)}</td>
+                    <td class="col-yearMortgageInterestPaid text-red-600">${formatCurrency(row.yearMortgageInterestPaid)}</td>
+                    <td class="col-yearPrincipalPaid">${formatCurrency(row.yearPrincipalPaid)}</td>
+                    <td class="col-mortgageBalanceEnd">${formatCurrency(row.mortgageBalanceEnd)}</td>
+                    <td class="col-reAdvancedToHeloc">${formatCurrency(row.reAdvancedToHeloc)}</td>
+                    <td class="col-helocBalanceStart">${formatCurrency(row.helocBalanceStart)}</td>
+                    <td class="col-helocInterestDue text-red-600">${formatCurrency(row.helocInterestDue)}</td>
+                    <td class="col-helocBalanceEnd">${formatCurrency(row.helocBalanceEnd)}</td>
+                    <td class="col-investmentValueStart">${formatCurrency(row.investmentValueStart)}</td>
+                    <td class="col-investmentGrowth text-green-600 font-medium">${formatCurrency(row.investmentGrowth)}</td>
+                    <td class="col-investmentValueEnd text-green-600 font-medium">${formatCurrency(row.investmentValueEnd)}</td>
+                    <td class="col-taxSavingsThisPeriod text-blue-600">${formatCurrency(row.taxSavingsThisPeriod)}</td>
+                    <td class="col-cumulativeTaxSavings text-blue-600 font-bold">${formatCurrency(row.cumulativeTaxSavings)}</td>
                 `;
                 tableBody.appendChild(tr);
+            });
+            updateColumnVisibility();
+        }
+        
+        function setupColumnToggles() {
+            const container = document.getElementById('columnToggles');
+            const toggleGrid = container.querySelector('.grid');
+            
+            toggleGrid.innerHTML = ''; // Always clear and rebuild to reflect state
+            
+            columnConfig.forEach(col => {
+                const label = document.createElement('label');
+                label.className = 'toggle-label';
+                label.innerHTML = `
+                    <span class="text-gray-700">${col.label}</span>
+                    <div class="relative">
+                        <input type="checkbox" id="toggle-${col.id}" data-col-class="col-${col.id}" class="toggle-switch-input" ${col.visible ? 'checked' : ''}>
+                        <div class="toggle-switch-bg"><div class="toggle-switch-dot"></div></div>
+                    </div>
+                `;
+                toggleGrid.appendChild(label);
+            });
+            
+            container.removeEventListener('change', updateColumnVisibility); // Prevent multiple listeners
+            container.addEventListener('change', updateColumnVisibility);
+            
+            container.classList.remove('hidden');
+        }
+
+        function setupTableHeaders() {
+            const headerRow = document.getElementById('table-header-row');
+            headerRow.innerHTML = '';
+            columnConfig.forEach(col => {
+                const th = document.createElement('th');
+                th.className = `col-${col.id}`;
+                th.textContent = col.label;
+                headerRow.appendChild(th);
+            });
+        }
+
+        function updateColumnVisibility() {
+            columnConfig.forEach(col => {
+                const checkbox = document.getElementById(`toggle-${col.id}`);
+                 if (checkbox) {
+                    col.visible = checkbox.checked;
+                    const elements = document.querySelectorAll(`.col-${col.id}`);
+                    elements.forEach(el => {
+                        el.classList.toggle('hidden', !col.visible);
+                    });
+                }
             });
         }
 
         function displayChart(data) {
             const ctx = document.getElementById('growthChart').getContext('2d');
-            
-            if (growthChartInstance) {
-                growthChartInstance.destroy();
-            }
-
+            if (growthChartInstance) growthChartInstance.destroy();
             growthChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: data.labels,
                     datasets: [
-                        {
-                            label: 'Mortgage Balance',
-                            data: data.mortgage,
-                            borderColor: 'rgba(239, 68, 68, 0.8)',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            borderWidth: 2,
-                            pointRadius: 1,
-                            tension: 0.1,
-                            fill: true
-                        },
-                        {
-                            label: 'Investment Portfolio',
-                            data: data.portfolio,
-                            borderColor: 'rgba(22, 163, 74, 0.8)',
-                            backgroundColor: 'rgba(22, 163, 74, 0.1)',
-                            borderWidth: 2,
-                            pointRadius: 1,
-                            tension: 0.1,
-                            fill: true
-                        },
-                        {
-                            label: 'Net Worth',
-                            data: data.netWorth,
-                            borderColor: 'rgba(79, 70, 229, 1)',
-                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                            borderWidth: 3,
-                            pointRadius: 1,
-                            tension: 0.1
-                        }
+                        { label: 'Mortgage Balance', data: data.mortgage, borderColor: 'rgba(239, 68, 68, 0.8)', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderWidth: 2, pointRadius: 1, tension: 0.1, fill: true },
+                        { label: 'Investment Portfolio', data: data.portfolio, borderColor: 'rgba(22, 163, 74, 0.8)', backgroundColor: 'rgba(22, 163, 74, 0.1)', borderWidth: 2, pointRadius: 1, tension: 0.1, fill: true },
+                        { label: 'Net Worth', data: data.netWorth, borderColor: 'rgba(79, 70, 229, 1)', backgroundColor: 'rgba(79, 70, 229, 0.1)', borderWidth: 3, pointRadius: 1, tension: 0.1 }
                     ]
                 },
                 options: {
                     responsive: true,
                     plugins: {
-                        title: {
-                            display: true,
-                            text: 'Wealth Growth Over Time',
-                            font: { size: 18 }
-                        },
-                        tooltip: {
-                             callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += formatCurrency(context.parsed.y);
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
+                        title: { display: true, text: 'Wealth Growth Over Time', font: { size: 18 } },
+                        tooltip: { callbacks: { label: context => `${context.dataset.label || ''}: ${formatCurrency(context.parsed.y)}` }}
                     },
                     scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Years'
-                            }
-                        },
-                        y: {
-                           title: {
-                                display: true,
-                                text: 'Value ($)'
-                            },
-                            ticks: {
-                                callback: function(value, index, values) {
-                                    return formatCurrency(value);
-                                }
-                            }
-                        }
+                        x: { title: { display: true, text: 'Years' }},
+                        y: { title: { display: true, text: 'Value ($)' }, ticks: { callback: value => formatCurrency(value) }}
                     }
                 }
             });
         }
+
 
         // --- Utility Function ---
         function formatCurrency(value) {
@@ -435,6 +536,9 @@
                 maximumFractionDigits: 0,
             }).format(value);
         }
+        
+        // Initial setup on load
+        setupTableHeaders();
 
     </script>
 </body>
