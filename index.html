@@ -123,7 +123,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="dividendTaxRate" class="form-label">Dividend Tax Rate (%)</label>
-                                    <input type="number" id="dividendTaxRate" class="form-input" value="15" step="0.01" required>
+                                    <input type="number" id="dividendTaxRate" class="form-input" value="40" step="0.01" required>
                                 </div>
                             </div>
                         </div>
@@ -281,13 +281,14 @@
             { id: 'mortgageBalanceStart', label: 'Mortgage Bal (Start)', visible: false },
             { id: 'mortgagePrepayment', label: 'Mortgage Prepayment', visible: false },
             { id: 'yearMortgageInterestPaid', label: 'Interest (Mortgage)', visible: false },
-            { id: 'yearPrincipalPaid', label: 'Principal (Mortgage)', visible: false },
+            { id: 'yearPrincipalPaid', label: 'Principal Paydown', visible: false },
             { id: 'mortgageBalanceEnd', label: 'Mortgage Bal (End)', visible: true },
             { id: 'reAdvancedToHeloc', label: 'Re-advanced', visible: false },
             { id: 'helocBalanceStart', label: 'HELOC Bal (Start)', visible: false },
             { id: 'helocInterestDue', label: 'HELOC Interest', visible: false },
             { id: 'helocBalanceEnd', label: 'HELOC Bal (End)', visible: true },
-            { id: 'dividendIncome', label: 'Dividend Income', visible: false },
+            { id: 'dividendIncomePreTax', label: 'Dividend Income (Pre-tax)', visible: false },
+            { id: 'dividendIncomePostTax', label: 'Dividend Income (Post-tax)', visible: false },
             { id: 'investmentValueStart', label: 'Invest Val (Start)', visible: false },
             { id: 'investmentGrowth', label: 'Invest Growth', visible: true },
             { id: 'investmentValueEnd', label: 'Invest Val (End)', visible: true },
@@ -412,8 +413,8 @@
                 cumulativeTaxSavings += taxSavingsThisPeriod;
                 annualTaxRefund += taxSavingsThisPeriod;
                 
-                const dividendIncome = investmentValueStart * monthlyDividendYieldRate;
-                annualDividends += dividendIncome;
+                const dividendIncomePreTax = investmentValueStart * monthlyDividendYieldRate;
+                annualDividends += dividendIncomePreTax;
 
                 // --- HELOC & Investment Logic ---
                 let potentialNewBorrowing = reAdvancedToHeloc + taxPrepaymentThisMonth + dividendPrepaymentThisMonth;
@@ -427,7 +428,7 @@
                 helocBalance += newInvestment;
                 
                 const investmentGrowth = (investmentValueStart + newInvestment) * monthlyCapitalGrowthRate;
-                portfolioValue = investmentValueStart + newInvestment + investmentGrowth + dividendIncome;
+                portfolioValue = investmentValueStart + newInvestment + investmentGrowth + dividendIncomePreTax;
                 
                 const netWorth = portfolioValue - helocBalance;
 
@@ -442,7 +443,8 @@
                     helocBalanceStart,
                     helocInterestDue,
                     helocBalanceEnd: helocBalance,
-                    dividendIncome,
+                    dividendIncomePreTax,
+                    dividendIncomePostTax: dividendIncomePreTax * (1 - dividendTaxRate),
                     investmentValueStart,
                     investmentGrowth,
                     investmentValueEnd: portfolioValue,
@@ -521,11 +523,12 @@
                         acc.yearPrincipalPaid += month.yearPrincipalPaid;
                         acc.reAdvancedToHeloc += month.reAdvancedToHeloc;
                         acc.helocInterestDue += month.helocInterestDue;
-                        acc.dividendIncome += month.dividendIncome;
+                        acc.dividendIncomePreTax += month.dividendIncomePreTax;
+                        acc.dividendIncomePostTax += month.dividendIncomePostTax;
                         acc.investmentGrowth += month.investmentGrowth;
                         acc.taxSavingsThisPeriod += month.taxSavingsThisPeriod;
                         return acc;
-                    }, { mortgagePrepayment: 0, yearMortgageInterestPaid: 0, yearPrincipalPaid: 0, reAdvancedToHeloc: 0, helocInterestDue: 0, dividendIncome: 0, investmentGrowth: 0, taxSavingsThisPeriod: 0 });
+                    }, { mortgagePrepayment: 0, yearMortgageInterestPaid: 0, yearPrincipalPaid: 0, reAdvancedToHeloc: 0, helocInterestDue: 0, dividendIncomePreTax: 0, dividendIncomePostTax: 0, investmentGrowth: 0, taxSavingsThisPeriod: 0 });
 
                     const firstMonth = yearSlice[0];
                     const lastMonth = yearSlice[yearSlice.length - 1];
@@ -560,7 +563,8 @@
                     <td class="col-helocBalanceStart">${formatCurrency(row.helocBalanceStart)}</td>
                     <td class="col-helocInterestDue text-red-600">${formatCurrency(row.helocInterestDue)}</td>
                     <td class="col-helocBalanceEnd">${formatCurrency(row.helocBalanceEnd)}</td>
-                    <td class="col-dividendIncome text-green-600">${formatCurrency(row.dividendIncome)}</td>
+                    <td class="col-dividendIncomePreTax text-green-600">${formatCurrency(row.dividendIncomePreTax)}</td>
+                    <td class="col-dividendIncomePostTax text-green-600">${formatCurrency(row.dividendIncomePostTax)}</td>
                     <td class="col-investmentValueStart">${formatCurrency(row.investmentValueStart)}</td>
                     <td class="col-investmentGrowth text-green-600 font-medium">${formatCurrency(row.investmentGrowth)}</td>
                     <td class="col-investmentValueEnd text-green-600 font-medium">${formatCurrency(row.investmentValueEnd)}</td>
