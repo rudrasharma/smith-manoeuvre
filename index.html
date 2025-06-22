@@ -263,7 +263,7 @@
             let helocBalance = 0;
             let portfolioValue = 0;
             let cumulativeTaxSavings = 0;
-            const chartData = { labels: [], mortgage: [], portfolio: [], netWorth: [] };
+            const chartData = { labels: [], mortgage: [], portfolio: [], netWorth: [], heloc: [] };
             monthlyResults = [];
 
             const monthlyMortgageRate = mortgageRate / 12;
@@ -328,7 +328,8 @@
                 const investmentGrowth = (investmentValueStart + newInvestment) * monthlyInvestmentReturn;
                 portfolioValue = investmentValueStart + newInvestment + investmentGrowth;
                 
-                const netWorth = portfolioValue - currentMortgageBalance - helocBalance;
+                // UPDATED NET WORTH CALCULATION
+                const netWorth = portfolioValue - helocBalance;
 
                 monthlyResults.push({
                     period: month,
@@ -344,7 +345,8 @@
                     investmentGrowth,
                     investmentValueEnd: portfolioValue,
                     taxSavingsThisPeriod,
-                    cumulativeTaxSavings
+                    cumulativeTaxSavings,
+                    netWorth // Store net worth for table display if needed
                 });
 
                 if (month % 12 === 0 || month === totalMonths) {
@@ -352,6 +354,7 @@
                     chartData.mortgage.push(currentMortgageBalance);
                     chartData.portfolio.push(portfolioValue);
                     chartData.netWorth.push(netWorth);
+                    chartData.heloc.push(helocBalance);
                 }
             }
             
@@ -520,6 +523,7 @@
                     labels: data.labels,
                     datasets: [
                         { label: 'Mortgage Balance', data: data.mortgage, borderColor: 'rgba(239, 68, 68, 0.8)', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderWidth: 2, pointRadius: 1, tension: 0.1, fill: true },
+                        { label: 'HELOC Balance', data: data.heloc, borderColor: 'rgba(245, 158, 11, 0.8)', backgroundColor: 'rgba(245, 158, 11, 0.1)', borderWidth: 2, pointRadius: 1, tension: 0.1, fill: true },
                         { label: 'Investment Portfolio', data: data.portfolio, borderColor: 'rgba(22, 163, 74, 0.8)', backgroundColor: 'rgba(22, 163, 74, 0.1)', borderWidth: 2, pointRadius: 1, tension: 0.1, fill: true },
                         { label: 'Net Worth', data: data.netWorth, borderColor: 'rgba(79, 70, 229, 1)', backgroundColor: 'rgba(79, 70, 229, 0.1)', borderWidth: 3, pointRadius: 1, tension: 0.1 }
                     ]
