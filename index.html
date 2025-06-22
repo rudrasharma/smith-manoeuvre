@@ -161,6 +161,12 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Summary -->
+                    <div id="summarySection" class="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-lg hidden">
+                        <h3 class="font-semibold text-lg mb-2 text-indigo-800">Summary</h3>
+                        <p class="text-gray-700">Calculated Monthly Mortgage Payment: <span id="monthlyPaymentValue" class="font-bold text-indigo-700"></span></p>
+                    </div>
                     
                     <!-- Chart -->
                     <div class="mb-8">
@@ -261,10 +267,16 @@
             monthlyResults = [];
 
             const monthlyMortgageRate = mortgageRate / 12;
-            const monthlyHelocRate = helocRate / 12;
-            const monthlyInvestmentReturn = Math.pow(1 + investmentReturn, 1/12) - 1;
             const totalMonths = amortization * 12;
             const monthlyMortgagePayment = mortgageAmount * (monthlyMortgageRate * Math.pow(1 + monthlyMortgageRate, totalMonths)) / (Math.pow(1 + monthlyMortgageRate, totalMonths) - 1);
+            
+            // Display monthly payment
+            document.getElementById('monthlyPaymentValue').textContent = formatCurrency(monthlyMortgagePayment);
+            document.getElementById('summarySection').classList.remove('hidden');
+
+
+            const monthlyHelocRate = helocRate / 12;
+            const monthlyInvestmentReturn = Math.pow(1 + investmentReturn, 1/12) - 1;
             let annualTaxRefund = 0;
 
             for (let month = 1; month <= totalMonths; month++) {
