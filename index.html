@@ -110,12 +110,20 @@
                                     <input type="number" id="helocRate" class="form-input" value="5.5" step="0.01" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="investmentReturn" class="form-label">Annual Investment Return (%)</label>
-                                    <input type="number" id="investmentReturn" class="form-input" value="7" step="0.01" required>
+                                    <label for="investmentReturn" class="form-label">Annual Return (Capital Growth) (%)</label>
+                                    <input type="number" id="investmentReturn" class="form-input" value="5" step="0.01" required>
+                                </div>
+                                 <div class="form-group">
+                                    <label for="dividendYield" class="form-label">Annual Dividend Yield (%)</label>
+                                    <input type="number" id="dividendYield" class="form-input" value="2" step="0.01" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="taxRate" class="form-label">Marginal Tax Rate (%)</label>
                                     <input type="number" id="taxRate" class="form-input" value="40" step="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dividendTaxRate" class="form-label">Dividend Tax Rate (%)</label>
+                                    <input type="number" id="dividendTaxRate" class="form-input" value="15" step="0.01" required>
                                 </div>
                             </div>
                         </div>
@@ -133,6 +141,13 @@
                                 <label for="useTaxRefundAsPrepayment" class="font-medium text-gray-900">Use Tax Refund as Prepayment?</label>
                                 <label class="relative inline-flex items-center cursor-pointer toggle-switch-label">
                                   <input type="checkbox" id="useTaxRefundAsPrepayment" class="toggle-switch-input" checked>
+                                  <div class="toggle-switch-bg"><div class="toggle-switch-dot"></div></div>
+                                </label>
+                            </div>
+                             <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200">
+                                <label for="useDividendsAsPrepayment" class="font-medium text-gray-900">Use Dividends as Prepayment?</label>
+                                <label class="relative inline-flex items-center cursor-pointer toggle-switch-label">
+                                  <input type="checkbox" id="useDividendsAsPrepayment" class="toggle-switch-input" checked>
                                   <div class="toggle-switch-bg"><div class="toggle-switch-dot"></div></div>
                                 </label>
                             </div>
@@ -231,22 +246,23 @@
                                 <strong>HELOC Re-advance:</strong> The amount of principal paid on the mortgage becomes available as credit in your Home Equity Line of Credit (HELOC). This amount is immediately borrowed ("re-advanced") to be invested.
                             </li>
                             <li>
-                                <strong>Tax Savings Calculation:</strong> Interest paid on the HELOC is tax-deductible. The calculator determines the potential tax savings for the period by multiplying the HELOC interest by your marginal tax rate. These savings accumulate over the year.
+                                <strong>Tax & Dividend Logic:</strong>
+                                <ul>
+                                    <li>Interest paid on the HELOC is tax-deductible, generating a tax refund based on your marginal tax rate.</li>
+                                    <li>Dividends earned from your portfolio are taxed at your specified dividend tax rate.</li>
+                                </ul>
                             </li>
                             <li>
-                                <strong>Mortgage Prepayment (Accelerator):</strong> If you've enabled the "Use Tax Refund as Prepayment" option, the accumulated tax savings from the previous year are applied as a lump-sum payment against your mortgage principal at the start of the new year. This significantly speeds up how fast you pay off your non-deductible mortgage.
+                                <strong>Mortgage Prepayment (Accelerators):</strong> If enabled, the after-tax income from both the tax refund and dividends is applied as a lump-sum payment against the mortgage, significantly shortening its lifespan.
                             </li>
                              <li>
                                 <strong>Capitalized Interest (Optional):</strong> If enabled, the interest due on the HELOC is added to the HELOC balance instead of being paid out-of-pocket. This borrowed interest amount is also invested and becomes tax-deductible.
                             </li>
                             <li>
-                                <strong>Investment:</strong> The total amount available for investment in any given month is the sum of the re-advanced principal, any mortgage prepayment from tax refunds, and any capitalized HELOC interest.
-                            </li>
-                            <li>
-                                <strong>Portfolio Growth:</strong> The total invested amount grows (or shrinks) based on the "Annual Investment Return" you provide, compounded monthly.
+                                <strong>Investment & Growth:</strong> The total amount available for investment is the sum of the re-advanced principal, any prepayments, and any capitalized interest. The portfolio then grows based on your specified capital growth and dividend yield.
                             </li>
                              <li>
-                                <strong>Net Worth Calculation:</strong> The "Net Worth" shown on the chart and in the table is calculated as:
+                                <strong>Net Worth Calculation:</strong> The "Net Worth" shown is calculated as:
                                 <code class="bg-gray-200 p-1 rounded">Investment Portfolio Value - HELOC Balance</code>. This isolates the performance of the investment strategy itself.
                             </li>
                         </ol>
@@ -271,6 +287,7 @@
             { id: 'helocBalanceStart', label: 'HELOC Bal (Start)', visible: false },
             { id: 'helocInterestDue', label: 'HELOC Interest', visible: false },
             { id: 'helocBalanceEnd', label: 'HELOC Bal (End)', visible: true },
+            { id: 'dividendIncome', label: 'Dividend Income', visible: false },
             { id: 'investmentValueStart', label: 'Invest Val (Start)', visible: false },
             { id: 'investmentGrowth', label: 'Invest Growth', visible: true },
             { id: 'investmentValueEnd', label: 'Invest Val (End)', visible: true },
@@ -301,13 +318,16 @@
             const mortgageRate = parseFloat(document.getElementById('mortgageRate').value) / 100;
             const amortization = parseInt(document.getElementById('amortization').value);
             const helocRate = parseFloat(document.getElementById('helocRate').value) / 100;
-            const investmentReturn = parseFloat(document.getElementById('investmentReturn').value) / 100;
+            const capitalGrowthRate = parseFloat(document.getElementById('investmentReturn').value) / 100;
+            const dividendYield = parseFloat(document.getElementById('dividendYield').value) / 100;
             const taxRate = parseFloat(document.getElementById('taxRate').value) / 100;
+            const dividendTaxRate = parseFloat(document.getElementById('dividendTaxRate').value) / 100;
             const capitalizeInterest = document.getElementById('capitalizeInterest').checked;
             const useTaxRefundAsPrepayment = document.getElementById('useTaxRefundAsPrepayment').checked;
+            const useDividendsAsPrepayment = document.getElementById('useDividendsAsPrepayment').checked;
             const topUpAmount = parseFloat(document.getElementById('topUpAmount').value) || 0;
             
-            if (isNaN(homeValue) || isNaN(mortgageAmount) || isNaN(mortgageRate) || isNaN(amortization) || isNaN(helocRate) || isNaN(investmentReturn) || isNaN(taxRate) || isNaN(topUpAmount)) {
+            if (isNaN(homeValue) || isNaN(mortgageAmount) || isNaN(mortgageRate) || isNaN(amortization) || isNaN(helocRate) || isNaN(capitalGrowthRate) || isNaN(dividendYield) || isNaN(taxRate) || isNaN(dividendTaxRate) || isNaN(topUpAmount)) {
                 alert("Please ensure all fields have valid numbers.");
                 return;
             }
@@ -337,9 +357,12 @@
             document.getElementById('monthlyPaymentValue').textContent = formatCurrency(monthlyMortgagePayment);
             document.getElementById('summarySection').classList.remove('hidden');
 
+            const monthlyCapitalGrowthRate = Math.pow(1 + capitalGrowthRate, 1/12) - 1;
+            const monthlyDividendYieldRate = dividendYield / 12;
+
             const monthlyHelocRate = helocRate / 12;
-            const monthlyInvestmentReturn = Math.pow(1 + investmentReturn, 1/12) - 1;
             let annualTaxRefund = 0;
+            let annualDividends = 0;
 
             // --- Main Simulation Loop ---
             for (let month = 1; month <= totalMonths; month++) {
@@ -349,18 +372,26 @@
                 const helocBalanceStart = helocBalance;
                 const investmentValueStart = portfolioValue;
 
-                // --- Tax Refund & Prepayment Logic ---
+                // --- Tax Refund & Dividend Prepayment Logic ---
                 let taxPrepaymentThisMonth = 0;
-                if (useTaxRefundAsPrepayment && month > 1 && (month - 1) % 12 === 0) {
-                    taxPrepaymentThisMonth = annualTaxRefund;
-                    currentMortgageBalance -= taxPrepaymentThisMonth;
+                let dividendPrepaymentThisMonth = 0;
+
+                if (month > 1 && (month - 1) % 12 === 0) {
+                    if(useTaxRefundAsPrepayment) {
+                        taxPrepaymentThisMonth = annualTaxRefund;
+                    }
+                    if(useDividendsAsPrepayment) {
+                        dividendPrepaymentThisMonth = annualDividends * (1 - dividendTaxRate);
+                    }
+                    
+                    let totalPrepayment = taxPrepaymentThisMonth + dividendPrepaymentThisMonth;
+                    currentMortgageBalance -= totalPrepayment;
                     if(currentMortgageBalance < 0) {
-                        taxPrepaymentThisMonth += currentMortgageBalance;
+                        totalPrepayment += currentMortgageBalance; // adjust if overpaid
                         currentMortgageBalance = 0;
                     }
                     annualTaxRefund = 0;
-                } else if ((month - 1) % 12 === 0) {
-                     annualTaxRefund = 0; // Reset refund even if not used
+                    annualDividends = 0;
                 }
                 
                 // --- Mortgage Payment Logic ---
@@ -380,9 +411,12 @@
                 const taxSavingsThisPeriod = helocInterestDue * taxRate;
                 cumulativeTaxSavings += taxSavingsThisPeriod;
                 annualTaxRefund += taxSavingsThisPeriod;
+                
+                const dividendIncome = investmentValueStart * monthlyDividendYieldRate;
+                annualDividends += dividendIncome;
 
                 // --- HELOC & Investment Logic ---
-                let potentialNewBorrowing = reAdvancedToHeloc + taxPrepaymentThisMonth;
+                let potentialNewBorrowing = reAdvancedToHeloc + taxPrepaymentThisMonth + dividendPrepaymentThisMonth;
                 if (capitalizeInterest) {
                     potentialNewBorrowing += helocInterestDue;
                 }
@@ -392,15 +426,15 @@
 
                 helocBalance += newInvestment;
                 
-                const investmentGrowth = (investmentValueStart + newInvestment) * monthlyInvestmentReturn;
-                portfolioValue = investmentValueStart + newInvestment + investmentGrowth;
+                const investmentGrowth = (investmentValueStart + newInvestment) * monthlyCapitalGrowthRate;
+                portfolioValue = investmentValueStart + newInvestment + investmentGrowth + dividendIncome;
                 
                 const netWorth = portfolioValue - helocBalance;
 
                 monthlyResults.push({
                     period: month,
                     mortgageBalanceStart,
-                    mortgagePrepayment: taxPrepaymentThisMonth,
+                    mortgagePrepayment: taxPrepaymentThisMonth + dividendPrepaymentThisMonth,
                     yearMortgageInterestPaid: mortgageInterestPaid,
                     yearPrincipalPaid: mortgagePrincipalPaid,
                     mortgageBalanceEnd: currentMortgageBalance,
@@ -408,6 +442,7 @@
                     helocBalanceStart,
                     helocInterestDue,
                     helocBalanceEnd: helocBalance,
+                    dividendIncome,
                     investmentValueStart,
                     investmentGrowth,
                     investmentValueEnd: portfolioValue,
@@ -486,10 +521,11 @@
                         acc.yearPrincipalPaid += month.yearPrincipalPaid;
                         acc.reAdvancedToHeloc += month.reAdvancedToHeloc;
                         acc.helocInterestDue += month.helocInterestDue;
+                        acc.dividendIncome += month.dividendIncome;
                         acc.investmentGrowth += month.investmentGrowth;
                         acc.taxSavingsThisPeriod += month.taxSavingsThisPeriod;
                         return acc;
-                    }, { mortgagePrepayment: 0, yearMortgageInterestPaid: 0, yearPrincipalPaid: 0, reAdvancedToHeloc: 0, helocInterestDue: 0, investmentGrowth: 0, taxSavingsThisPeriod: 0 });
+                    }, { mortgagePrepayment: 0, yearMortgageInterestPaid: 0, yearPrincipalPaid: 0, reAdvancedToHeloc: 0, helocInterestDue: 0, dividendIncome: 0, investmentGrowth: 0, taxSavingsThisPeriod: 0 });
 
                     const firstMonth = yearSlice[0];
                     const lastMonth = yearSlice[yearSlice.length - 1];
@@ -524,6 +560,7 @@
                     <td class="col-helocBalanceStart">${formatCurrency(row.helocBalanceStart)}</td>
                     <td class="col-helocInterestDue text-red-600">${formatCurrency(row.helocInterestDue)}</td>
                     <td class="col-helocBalanceEnd">${formatCurrency(row.helocBalanceEnd)}</td>
+                    <td class="col-dividendIncome text-green-600">${formatCurrency(row.dividendIncome)}</td>
                     <td class="col-investmentValueStart">${formatCurrency(row.investmentValueStart)}</td>
                     <td class="col-investmentGrowth text-green-600 font-medium">${formatCurrency(row.investmentGrowth)}</td>
                     <td class="col-investmentValueEnd text-green-600 font-medium">${formatCurrency(row.investmentValueEnd)}</td>
