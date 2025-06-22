@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smith Manoeuvre Calculator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -214,6 +214,43 @@
                 </div>
                  <div class="card text-center" id="initialState">
                     <p class="text-gray-500">Enter your financial details and click "Calculate Projection" to see your personalized Smith Manoeuvre growth table.</p>
+                </div>
+            </div>
+
+            <!-- How It's Calculated Section -->
+            <div class="lg:col-span-3 mt-8">
+                <div class="card">
+                    <h2 class="text-2xl font-semibold mb-4 border-b pb-2">How It's Calculated</h2>
+                    <article class="prose max-w-none text-gray-700">
+                        <p>This calculator simulates the Smith Manoeuvre on a periodic basis (monthly or annually) to project its long-term impact. Here's a breakdown of the core logic for each period:</p>
+                        <ol class="space-y-3 mt-4">
+                            <li>
+                                <strong>Mortgage Payment:</strong> Your standard monthly mortgage payment is calculated. This payment is split into two parts: the interest owed to the lender and the principal that pays down your loan.
+                            </li>
+                            <li>
+                                <strong>HELOC Re-advance:</strong> The amount of principal paid on the mortgage becomes available as credit in your Home Equity Line of Credit (HELOC). This amount is immediately borrowed ("re-advanced") to be invested.
+                            </li>
+                            <li>
+                                <strong>Tax Savings Calculation:</strong> Interest paid on the HELOC is tax-deductible. The calculator determines the potential tax savings for the period by multiplying the HELOC interest by your marginal tax rate. These savings accumulate over the year.
+                            </li>
+                            <li>
+                                <strong>Mortgage Prepayment (Accelerator):</strong> If you've enabled the "Use Tax Refund as Prepayment" option, the accumulated tax savings from the previous year are applied as a lump-sum payment against your mortgage principal at the start of the new year. This significantly speeds up how fast you pay off your non-deductible mortgage.
+                            </li>
+                             <li>
+                                <strong>Capitalized Interest (Optional):</strong> If enabled, the interest due on the HELOC is added to the HELOC balance instead of being paid out-of-pocket. This borrowed interest amount is also invested and becomes tax-deductible.
+                            </li>
+                            <li>
+                                <strong>Investment:</strong> The total amount available for investment in any given month is the sum of the re-advanced principal, any mortgage prepayment from tax refunds, and any capitalized HELOC interest.
+                            </li>
+                            <li>
+                                <strong>Portfolio Growth:</strong> The total invested amount grows (or shrinks) based on the "Annual Investment Return" you provide, compounded monthly.
+                            </li>
+                             <li>
+                                <strong>Net Worth Calculation:</strong> The "Net Worth" shown on the chart and in the table is calculated as:
+                                <code class="bg-gray-200 p-1 rounded">Investment Portfolio Value - HELOC Balance</code>. This isolates the performance of the investment strategy itself.
+                            </li>
+                        </ol>
+                    </article>
                 </div>
             </div>
         </main>
